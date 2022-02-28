@@ -1,13 +1,18 @@
-import * as express from "express";
-import { Request, Response }  from "express";
-import * as cors from "cors";
-import * as helmet from "helmet";
-import routes from "./routes"
 import 'module-alias/register';
 import "reflect-metadata";
+import express from "express";
+import { Request, Response }  from "express";
+import cors from "cors";
+import helmet from "helmet";
+import routes from "routes";
+
+//variables de entorno para desarrollo
+if ( process.env.NODE_ENV !== 'production' ) {
+  require('dotenv').config();
+}
 
 //puerto
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 //variables de entorno para desarrollo
 if ( process.env.NODE_ENV !== 'production' ) {

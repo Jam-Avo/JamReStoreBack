@@ -19,11 +19,11 @@
     "strictPropertyInitialization": false
   },
   "paths": {
-    "routes/*": ["routes/*"],
-    "models/*": ["models/*"],
-    "entities/*": ["entities/*"],
-    "config/*": ["config/*"],
-    "middlewares/*": ["middlewares/*"],
-    "controllers/*": ["controllers/*"],
+    "@routes/*": ["routes/*"],
+    "@models/*": ["models/*"],
+    "@entities/*": ["entities/*"],
+    "@config/*": ["config/*"],
+    "@middlewares/*": ["middlewares/*"],
+    "@controllers/*": ["controllers/*"],
   }
 }
