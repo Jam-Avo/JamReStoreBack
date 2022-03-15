@@ -7,6 +7,7 @@ export default class AuthManager {
     const { email, password } = req.body;
 
     if (!(email && password)) return { error: "Campos requeridos faltantes" };
+    console.log({email, password})
 
     const response = {};
 
