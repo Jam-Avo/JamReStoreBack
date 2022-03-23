@@ -9,9 +9,11 @@ export default class AuthManager {
     if (!(email && password)) return { error: "Campos requeridos faltantes" };
     console.log({email, password})
 
-    const response = {};
+    console.log({ email, password });
 
-    return {response}
+    const response = {error: false, message: null, data: null };
+
+    return response;
 
   };
 
@@ -21,9 +23,11 @@ export default class AuthManager {
     if (!(email && password && name))
       return { error: "Campos requeridos faltantes" };
 
-    const response = {};
+    console.log({ email, password, name });
 
-    return {response}
+    const response = {error: false, message: null, data: null };
+
+    return response;
   };
 
   public static authentication = async (req: Request) => {
