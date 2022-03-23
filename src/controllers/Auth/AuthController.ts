@@ -20,6 +20,15 @@ export default class AuthController {
     res.status(200).send(result);
   };
 
+  public static changePassword = async (req: Request, res: Response) => {
+    const result = await AuthManager.changePassword(req);
+    if (result.error) {
+      res.status(401).send(result);
+      return;
+    }
+    res.status(200).send(result);
+  };
+
   public static authentication = async (req: Request, res: Response) => {
     const result = await AuthManager.authentication(req);
     res.status(200).send(result);

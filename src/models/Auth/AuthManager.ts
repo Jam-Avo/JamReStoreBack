@@ -9,8 +9,6 @@ export default class AuthManager {
     if (!(email && password)) return { error: "Campos requeridos faltantes" };
     console.log({email, password})
 
-    console.log({ email, password });
-
     const response = {error: false, message: null, data: null };
 
     return response;
@@ -46,4 +44,16 @@ export default class AuthManager {
 
     return { accessToken };
   };
+
+  public static changePassword = async (req: Request) => {
+    const { email, password, } = req.body;
+    
+    console.log({email, password})
+
+    const response = {error: false, message: null, data: null };
+
+    return response;
+
+  }
+
 }
