@@ -21,6 +21,7 @@
   "paths": {
     "@routes/*": ["routes/*"],
     "@models/*": ["models/*"],
+    "@managers/*": ["managers/*"],
     "@entities/*": ["entities/*"],
     "@config/*": ["config/*"],
     "@middlewares/*": ["middlewares/*"],

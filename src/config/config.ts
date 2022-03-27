@@ -1,2 +1,3 @@
-const config = {jwtSecret: 'jwtSecret'};
+const config = { secretAccessToken: process.env.SECRET_ACCESS_TOKEN ?? "secretAccessToken", };
+
 export default config;

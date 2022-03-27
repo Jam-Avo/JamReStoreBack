@@ -5,8 +5,9 @@ import { Request, Response }  from "express";
 import cors from "cors";
 import helmet from "helmet";
 import routes from "routes";
+import "./database";
 
-//variables de entorno para desarrollo
+//Variables de entorno para desarrollo
 if ( process.env.NODE_ENV !== 'production' ) {
   require('dotenv').config();
 }
@@ -25,7 +26,7 @@ console.log("Front URL ", process.env.FRONT_URL);
 //app
 const app = express();
 
-//Parseo de hearder y body
+//Middlewares
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -39,14 +40,14 @@ app.use(cors(corsOptions));
 //herlmet
 app.use(helmet());
 
-//routes
+//Routes
 app.use('/', routes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to JamReStore's API!");
 });
 
-//listen port
+//Listen port
 app.listen(PORT, () => {
   console.log(`Server is listening on ${PORT}`);
 });

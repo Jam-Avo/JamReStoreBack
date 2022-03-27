@@ -1,4 +1,4 @@
-import AuthManager from "models/Auth/AuthManager";
+import AuthManager from "managers/Auth/AuthManager";
 import { Response, Request } from "express";
 
 export default class AuthController {
@@ -20,8 +20,4 @@ export default class AuthController {
     res.status(200).send(result);
   };
 
-  public static authentication = async (req: Request, res: Response) => {
-    const result = await AuthManager.authentication(req);
-    res.status(200).send(result);
-  };
 }
