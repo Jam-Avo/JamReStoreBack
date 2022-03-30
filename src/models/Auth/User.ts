@@ -5,6 +5,8 @@ export interface IUser {
     name: string,
     email: string,
     password: string,
+    number: string,
+    country: string,
 };
 
 export interface IUserDocument extends IUser, Document {
@@ -19,6 +21,9 @@ const UserSchema: Schema<IUserDocument> = new Schema({
     name: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
+    number: { type: String, required: true },
+    country: { type: String, required: true },
+
 });
 
 UserSchema.methods.encryptPassword = async (password: string) => {

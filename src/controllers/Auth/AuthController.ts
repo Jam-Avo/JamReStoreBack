@@ -20,4 +20,9 @@ export default class AuthController {
     res.status(200).send(result);
   };
 
+  public static setNumber = async (req: Request, res: Response) => {
+    const result = await AuthManager.setNumber(req);
+    res.status(200).send(result);
+  };
+
 }
