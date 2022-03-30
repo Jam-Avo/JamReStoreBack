@@ -5,8 +5,8 @@ export interface IUser {
     name: string,
     email: string,
     password: string,
-    number: string,
-    country: string,
+    numberPhone: string,
+    countryCode: string,
 };
 
 export interface IUserDocument extends IUser, Document {
@@ -21,8 +21,8 @@ const UserSchema: Schema<IUserDocument> = new Schema({
     name: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
-    number: { type: String },
-    country: { type: String },
+    numberPhone: { type: String },
+    countryCode: { type: String },
 
 });
 

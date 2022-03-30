@@ -81,17 +81,17 @@ export default class AuthManager {
   };
 
   public static setNumber = async (req: Request) => {
-    const { number } = req.body as IUser;
+    const { numberPhone, countryCode } = req.body as IUser;
 
     var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, };
     
-    if (!(number)) {
-      
+    if (!(numberPhone && countryCode)) {
       response.error = true;
       response.message = "Campo de número requerido faltante";
       return response;
     }
-      return response;
+
+    return response;
 
   };
 }
