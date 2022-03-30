@@ -90,7 +90,7 @@ export default class AuthManager {
       response.message = "Campo de número requerido faltante";
       return response;
     }
-
+    console.log({ numberPhone, countryCode })
     return response;
 
   };
