@@ -86,9 +86,12 @@ export default class AuthManager {
     var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, };
     
     if (!(number)) {
+      
       response.error = true;
       response.message = "Campo de número requerido faltante";
       return response;
     }
+      return response;
+
   };
 }
