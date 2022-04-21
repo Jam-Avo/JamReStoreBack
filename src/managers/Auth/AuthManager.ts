@@ -108,11 +108,11 @@ export default class AuthManager {
 
   };
 
-  public static otpCode = async (req: Request) => {
+  public static validateCode = async (req: Request) => {
     const { otpCodePhone } = req.body as IUser;
 
-    var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, };
-    
+    var response: TResponseApi<{ accessToken: string }> = { error: true, message: null, data: null, statusCode: 500, errors: [] };
+
     if (!(otpCodePhone)) {
       response.error = true;
       response.message = "Código de validación incompleto";

@@ -25,8 +25,8 @@ export default class AuthController {
     res.status(200).send(result);
   };
 
-  public static otpCode = async (req: Request, res: Response) => {
-    const result = await AuthManager.otpCode(req);
+  public static validateCode = async (req: Request, res: Response) => {
+    const result = await AuthManager.validateCode(req);
     res.status(200).send(result);
   };
 
