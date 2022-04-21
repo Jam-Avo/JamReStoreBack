@@ -5,7 +5,7 @@ export default class AuthController {
   public static signIn = async (req: Request, res: Response) => {
     const result = await AuthManager.signIn(req);
     if (result.error) {
-      res.status(401).send(result);
+      res.status(500).send(result);
       return;
     }
     res.status(200).send(result);

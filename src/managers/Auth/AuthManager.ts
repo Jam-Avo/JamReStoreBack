@@ -8,39 +8,44 @@ export default class AuthManager {
   public static signIn = async (req: Request) => {
     const { email, password } = req.body as IUser;
 
-    var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, };
-    
-    if (!(email && password)) {
-      response.error = true;
-      response.message = "Campos requeridos faltantes";
-      return response;
-    }
+    var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, statusCode: 500, errors: [] };
 
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      response.error = true;
-      response.message = "Usuario no existe";
-      return response;
-    }
-
-    const isValidPassword = await user.validatePassword(password, user.password);
-
-    if (!isValidPassword) {
-      response.error = true;
-      response.message = "Contraseña incorrecta";
-      return response;
-    }
-
-    console.log({ user })
-
-    const accessToken = jwt.sign({ idUser: user._id }, config.secretAccessToken, {
-      expiresIn: "24h"
-    });
-
-    response.data = { accessToken };
+    response.error = true;
+    response.errors = [{id: "password", message: "Contraseña incorrecta"}, {id: "emailmal", message: "Prueba de error"},];
 
     return response;
+    
+    // if (!(email && password)) {
+    //   response.error = true;
+    //   response.message = "Campos requeridos faltantes";
+    //   return response;
+    // }
+
+    // const user = await User.findOne({ email });
+
+    // if (!user) {
+    //   response.error = true;
+    //   response.message = "Usuario no existe";
+    //   return response;
+    // }
+
+    // const isValidPassword = await user.validatePassword(password, user.password);
+
+    // if (!isValidPassword) {
+    //   response.error = true;
+    //   response.message = "Contraseña incorrecta";
+    //   return response;
+    // }
+
+    // console.log({ user })
+
+    // const accessToken = jwt.sign({ idUser: user._id }, config.secretAccessToken, {
+    //   expiresIn: "24h"
+    // });
+
+    // response.data = { accessToken };
+
+    // return response;
 
   };
 
