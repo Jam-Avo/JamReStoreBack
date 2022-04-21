@@ -8,5 +8,5 @@ export type TResponseApi<T> = {
 
 export type ErrorInputMessage = {
     id: string,
-    message: string,
+    message?: string,
 }

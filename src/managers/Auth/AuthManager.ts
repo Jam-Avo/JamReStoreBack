@@ -3,6 +3,7 @@ import { Request } from "express";
 import * as jwt from "jsonwebtoken";
 import User, {IUser} from "models/Auth/User";
 import { TResponseApi } from "models/ResponseApi";
+import { print } from "util";
 
 export default class AuthManager {
   public static signIn = async (req: Request) => {
@@ -11,7 +12,7 @@ export default class AuthManager {
     var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, statusCode: 500, errors: [] };
 
     response.error = true;
-    response.errors = [{id: "password", message: "Contraseña incorrecta"}, {id: "emailmal", message: "Prueba de error"},];
+    response.errors = [{id: "password", message: "Contraseña incorrecta"}, {id: "email"},];
 
     return response;
     
@@ -50,27 +51,34 @@ export default class AuthManager {
   };
 
   public static signUp = async (req: Request) => {
-    const { email, password, name } = req.body as IUser;
+    const { email, name } = req.body as IUser;
 
-    var response: TResponseApi<{accessToken: string}> = { error: false, message: null, data: null, };
+    var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, statusCode: 500, errors: [] };
+
     
-    if (!(email && password && name)) {
-     response.error = true;
-      response.message = "Campos requeridos faltantes";
-      return response;
+    if (!email) {
+      
+      response.errors?.push({id: "email", message: "Campo Requerido"})
     }
+
+    if (!name) {
+      response.errors?.push({id: "name", message: "Campo Requerido"})
+    }
+
+    if (response.errors?.length != 0){
+      response.error = true;
+      return response; 
+    } 
 
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
+      response.errors?.push({id: "email", message: "Correo ya usado"})
       response.error = true;
-      response.message = "Correo electronico en uso";
       return response;
     }
 
-    const user = new User({ name, password, email });
-
-    user.password = await user.encryptPassword(user.password);
+    const user = new User({ name, email });
 
     console.log({ user });
     
@@ -80,7 +88,7 @@ export default class AuthManager {
       expiresIn: "24h"
     });
 
-    response.data = { accessToken };
+    response.data = null;
 
     return response;
   };

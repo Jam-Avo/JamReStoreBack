@@ -21,7 +21,7 @@ interface IUserModel extends Model<IUserDocument> {
 const UserSchema: Schema<IUserDocument> = new Schema({
     name: { type: String, required: true },
     email: { type: String, required: true },
-    password: { type: String, required: true },
+    password: { type: String },
     numberPhone: { type: String },
     countryCode: { type: String },
     otpCodePhone: { type: String },
