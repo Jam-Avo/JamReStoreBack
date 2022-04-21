@@ -122,5 +122,25 @@ export default class AuthManager {
     return response;
 
   };
+
+    public static createPassword = async (req: Request) => {
+    const { password } = req.body as IUser;
+
+      var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, statusCode: 500, errors: [] };
+
+      console.log({ password })
+    
+      response.errors?.push({id: "password", message: "Correo ya usado"})
+      response.error = true;
+      return response;
+
+    if (!(password)) {
+      response.error = true;
+      response.message = "Código de validación incompleto";
+      return response;
+    }
+    return response;
+
+  };
   
 }

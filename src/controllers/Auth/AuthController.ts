@@ -30,4 +30,9 @@ export default class AuthController {
     res.status(200).send(result);
   };
 
+  public static createPassword = async (req: Request, res: Response) => {
+    const result = await AuthManager.createPassword(req);
+    res.status(200).send(result);
+  };
+
 }

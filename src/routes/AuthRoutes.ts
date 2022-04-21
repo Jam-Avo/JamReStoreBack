@@ -7,5 +7,6 @@ router.post("/signIn", AuthController.signIn);
 router.post("/signUp", AuthController.signUp);
 router.post("/OtpNumber", AuthController.setNumberPhone);
 router.post("/otp", AuthController.otpCode);
+router.post("/createPassword", AuthController.createPassword);
 
-export default router;
+export default router; 
