@@ -123,11 +123,34 @@ export default class AuthManager {
 
   public static createPassword = async (req: Request) => {
     const { password } = req.body as IUser;
-    const accessToken = req.headers["authorization"] as string;
+    const accessToken = req.headers["authorization"]?.split(' ')[1] as string;
 
     console.log(accessToken);
 
     var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, errors: [] };
+
+    let userToken : any;
+
+    try {
+      userToken = jwt.verify(accessToken, config.secretAccessToken);
+      
+    } catch (error) {
+        response.error = true;
+        response.message = 'usuario no autorizado'
+        return response;
+    }
+
+    const user = await User.findOne({ _id: userToken.idUser });
+    if (!user) {
+      response.error = true;
+      response.message = 'usuario no encontrado'
+      return response;
+    }
+
+    user.password = await user.encryptPassword(password);
+
+    console.log(user);
+    
 
     console.log({ password });
 
