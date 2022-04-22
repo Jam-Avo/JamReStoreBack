@@ -3,61 +3,54 @@ import { Request } from "express";
 import * as jwt from "jsonwebtoken";
 import User, {IUser} from "models/Auth/User";
 import { TResponseApi } from "models/ResponseApi";
-import { print } from "util";
 
 export default class AuthManager {
   public static signIn = async (req: Request) => {
     const { email, password } = req.body as IUser;
 
-    var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, statusCode: 500, errors: [] };
+    var response: TResponseApi<AccessToken> = { error: false, message: null, data: null, errors: [] };
+    
+    if (!(email && password)) {
+      response.error = true;
+      response.message = "Campos requeridos faltantes";
+      return response;
+    }
 
-    response.error = true;
-    response.errors = [{id: "password", message: "Contraseña incorrecta"}, {id: "email"},];
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      response.error = true;
+      response.message = "Usuario no existe";
+      return response;
+    }
+
+    const isValidPassword = await user.validatePassword(password, user.password);
+
+    if (!isValidPassword) {
+      response.error = true;
+      response.message = "Contraseña incorrecta";
+      return response;
+    }
+
+    console.log({ user })
+
+    const accessToken = jwt.sign({ idUser: user._id }, config.secretAccessToken, {
+      expiresIn: "24h"
+    });
+
+    // TODO: Devolver toda la informacion necesaria del usuario
+    response.data = { accessToken };
 
     return response;
-    
-    // if (!(email && password)) {
-    //   response.error = true;
-    //   response.message = "Campos requeridos faltantes";
-    //   return response;
-    // }
-
-    // const user = await User.findOne({ email });
-
-    // if (!user) {
-    //   response.error = true;
-    //   response.message = "Usuario no existe";
-    //   return response;
-    // }
-
-    // const isValidPassword = await user.validatePassword(password, user.password);
-
-    // if (!isValidPassword) {
-    //   response.error = true;
-    //   response.message = "Contraseña incorrecta";
-    //   return response;
-    // }
-
-    // console.log({ user })
-
-    // const accessToken = jwt.sign({ idUser: user._id }, config.secretAccessToken, {
-    //   expiresIn: "24h"
-    // });
-
-    // response.data = { accessToken };
-
-    // return response;
 
   };
 
   public static signUp = async (req: Request) => {
     const { email, name } = req.body as IUser;
 
-    var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, statusCode: 500, errors: [] };
+    var response: TResponseApi<AccessToken> = { error: false, message: null, data: null, errors: [] };
 
-    
     if (!email) {
-      
       response.errors?.push({id: "email", message: "Campo Requerido"})
     }
 
@@ -73,7 +66,7 @@ export default class AuthManager {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      response.errors?.push({id: "email", message: "Correo ya usado"})
+      response.errors?.push({id: "email", message: "Correo no disponible"})
       response.error = true;
       return response;
     }
@@ -88,7 +81,7 @@ export default class AuthManager {
       expiresIn: "24h"
     });
 
-    response.data = null;
+    response.data = { accessToken };
 
     return response;
   };
@@ -96,7 +89,7 @@ export default class AuthManager {
   public static setNumber = async (req: Request) => {
     const { numberPhone, countryCode } = req.body as IUser;
 
-    var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, };
+    var response: TResponseApi<null> = { error: false, message: null, data: null, };
     
     if (!(numberPhone && countryCode)) {
       response.error = true;
@@ -111,7 +104,12 @@ export default class AuthManager {
   public static validateCode = async (req: Request) => {
     const { otpCodePhone } = req.body as IUser;
 
-    var response: TResponseApi<{ accessToken: string }> = { error: true, message: null, data: null, statusCode: 500, errors: [] };
+    const accessToken = req.headers["Authorization"] as string;
+
+    console.log({accessToken});
+    console.log({otpCodePhone});
+
+    var response: TResponseApi<null> = { error: true, message: null, data: null, errors: [] };
 
     if (!(otpCodePhone)) {
       response.error = true;
@@ -123,22 +121,22 @@ export default class AuthManager {
 
   };
 
-    public static createPassword = async (req: Request) => {
+  public static createPassword = async (req: Request) => {
     const { password } = req.body as IUser;
+    const accessToken = req.headers["authorization"] as string;
 
-      var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, statusCode: 500, errors: [] };
+    console.log(accessToken);
 
-      console.log({ password })
-    
-      response.errors?.push({id: "password", message: "Correo ya usado"})
-      response.error = true;
-      return response;
+    var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, errors: [] };
+
+    console.log({ password });
 
     if (!(password)) {
       response.error = true;
       response.message = "Código de validación incompleto";
       return response;
     }
+
     return response;
 
   };

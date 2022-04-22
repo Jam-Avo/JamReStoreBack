@@ -3,7 +3,6 @@ export type TResponseApi<T> = {
     message: string | null,
     data?: T | null,
     errors?: ErrorInputMessage[],
-    statusCode?: number,
 }
 
 export type ErrorInputMessage = {
