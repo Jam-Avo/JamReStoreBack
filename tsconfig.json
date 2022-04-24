@@ -24,7 +24,8 @@
     "@managers/*": ["managers/*"],
     "@entities/*": ["entities/*"],
     "@config/*": ["config/*"],
+    "@services/*": ["services/*"],
     "@middlewares/*": ["middlewares/*"],
     "@controllers/*": ["controllers/*"],
-  }
+  },
 }

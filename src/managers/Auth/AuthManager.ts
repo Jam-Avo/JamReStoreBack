@@ -3,6 +3,7 @@ import { Request } from "express";
 import * as jwt from "jsonwebtoken";
 import User, {IUser} from "models/Auth/User";
 import { TResponseApi } from "models/ResponseApi";
+import { transporter } from "services/mailer";
 
 export default class AuthManager {
   public static signIn = async (req: Request) => {
@@ -10,17 +11,25 @@ export default class AuthManager {
 
     var response: TResponseApi<AccessToken> = { error: false, message: null, data: null, errors: [] };
     
-    if (!(email && password)) {
-      response.error = true;
-      response.message = "Campos requeridos faltantes";
-      return response;
+    if (!email) {
+      response.errors?.push({id: "email", message: "Campo Requerido"})
     }
 
+    if (!password) {
+      response.errors?.push({id: "password", message: "Campo Requerido"})
+    }
+
+    if (response.errors?.length != 0){
+      response.error = true;
+      return response; 
+    }
+
+    //TODO: Se debe buscar por userName tambien
     const user = await User.findOne({ email });
 
     if (!user) {
       response.error = true;
-      response.message = "Usuario no existe";
+      response.errors?.push({id: "email", message: "Usuario no existe"})
       return response;
     }
 
@@ -28,17 +37,14 @@ export default class AuthManager {
 
     if (!isValidPassword) {
       response.error = true;
-      response.message = "Contraseña incorrecta";
+      response.errors?.push({id: "password", message: "Contraseña incorrecta"})
       return response;
     }
-
-    console.log({ user })
 
     const accessToken = jwt.sign({ idUser: user._id }, config.secretAccessToken, {
       expiresIn: "24h"
     });
 
-    // TODO: Devolver toda la informacion necesaria del usuario
     response.data = { accessToken };
 
     return response;
@@ -88,6 +94,7 @@ export default class AuthManager {
 
   public static setNumber = async (req: Request) => {
     const { numberPhone, countryCode } = req.body as IUser;
+    const userId = req.userId;
 
     var response: TResponseApi<null> = { error: false, message: null, data: null, };
     
@@ -101,46 +108,81 @@ export default class AuthManager {
 
   };
 
-  public static validateCode = async (req: Request) => {
-    const { otpCodePhone } = req.body as IUser;
+  public static sendCode = async (req: Request) => {
 
-    const accessToken = req.headers["Authorization"] as string;
+    const userId = req.userId;
+    var response: TResponseApi<null> = { error: false, message: null, data: null, errors: [] };
+    
+    //TODO: Crear codigo de validacion
 
-    console.log({accessToken});
-    console.log({otpCodePhone});
+    await transporter.sendMail({
+      from: '"JamReStore" <jamavocorp@gmail.com>',
+      to: "jamt042831@gmail.com",
+      subject: "Confirmar Correo JamReStore",
+      text: "Hola, confirma tu cuenta",
+      html: "<b>Codigo de seguridad: 000000</b>",
+    });
 
-    var response: TResponseApi<null> = { error: true, message: null, data: null, errors: [] };
+    const user = await User.findOne({ _id: userId });
 
-    if (!(otpCodePhone)) {
+    if (!user) {
       response.error = true;
-      response.message = "Código de validación incompleto";
+      response.message = 'Usuario no encontrado'
       return response;
     }
-    console.log({ otpCodePhone })
+
+    user.otpCode = "000000";
+
+    user.save();
+    
+    return response;
+  }
+
+  public static validateCode = async (req: Request) => {
+    const { otpCode } = req.body as IUser;
+    const userId = req.userId;
+
+    var response: TResponseApi<null> = { error: false, message: null, data: null, errors: [] };
+    
+    if (!(otpCode)) {
+      response.error = true;
+      response.message = "Código de validación requerido";
+      return response;
+    }
+
+    const user = await User.findOne({ _id: userId });
+
+    if (!user) {
+      response.error = true;
+      response.message = 'Usuario no encontrado'
+      return response;
+    }
+
+    if(user.otpCode != otpCode) {
+      response.error = true;
+      response.message = 'Codigo no valido'
+      return response;
+    }
+
+    console.log({ otpCode })
     return response;
 
   };
 
   public static createPassword = async (req: Request) => {
     const { password } = req.body as IUser;
-    const accessToken = req.headers["authorization"]?.split(' ')[1] as string;
-
-    console.log(accessToken);
+    const userId = req.userId;
 
     var response: TResponseApi<{ accessToken: string }> = { error: false, message: null, data: null, errors: [] };
 
-    let userToken : any;
-
-    try {
-      userToken = jwt.verify(accessToken, config.secretAccessToken);
-      
-    } catch (error) {
-        response.error = true;
-        response.message = 'usuario no autorizado'
-        return response;
+    if (!(password)) {
+      response.error = true;
+      response.message = "Campo Requerido";
+      return response;
     }
+    
+    const user = await User.findOne({ _id: userId });
 
-    const user = await User.findOne({ _id: userToken.idUser });
     if (!user) {
       response.error = true;
       response.message = 'usuario no encontrado'
@@ -149,16 +191,7 @@ export default class AuthManager {
 
     user.password = await user.encryptPassword(password);
 
-    console.log(user);
-    
-
-    console.log({ password });
-
-    if (!(password)) {
-      response.error = true;
-      response.message = "Código de validación incompleto";
-      return response;
-    }
+    user.save();
 
     return response;
 
